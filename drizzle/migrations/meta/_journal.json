@@ -8,6 +8,13 @@
       "when": 1794874135609,
       "tag": "0000_menu_categories_products",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1794874394376,
+      "tag": "0001_revoke_public_writes_menu",
+      "breakpoints": true
     }
   ]
 }
