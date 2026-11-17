@@ -1,5 +1,5 @@
 import { createFileRoute, useRouter, type ErrorComponentProps } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useDeferredValue, memo } from "react";
 import logo from "@/assets/rainha-logo.png.asset.json";
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -49,7 +49,7 @@ function Ornament() {
   );
 }
 
-function Item({ item }: { item: MenuItem }) {
+const Item = memo(function Item({ item }: { item: MenuItem }) {
   const nameMatch = item.name.match(/^(.*?)(\s*\([^)]*\))\s*$/);
   const primaryName = nameMatch ? nameMatch[1]!.trim() : item.name;
   const nameDetail = nameMatch ? nameMatch[2]!.trim() : null;
@@ -75,7 +75,7 @@ function Item({ item }: { item: MenuItem }) {
       )}
     </li>
   );
-}
+});
 
 function RouteErrorComponent({ reset }: ErrorComponentProps) {
   const router = useRouter();
@@ -111,6 +111,7 @@ function Index() {
   const qc = useQueryClient();
   const [active, setActive] = useState(menu[0]?.id ?? "");
   const [search, setSearch] = useState("");
+  const deferredSearch = useDeferredValue(search);
   const [showTop, setShowTop] = useState(false);
 
   useEffect(() => {
@@ -143,8 +144,8 @@ function Index() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const normalizedSearch = search.trim().toLowerCase();
-  const filteredMenu = normalizedSearch
+  const normalizedSearch = deferredSearch.trim().toLowerCase();
+  const filteredMenu = useMemo(() => (normalizedSearch
     ? menu
         .map((c) => ({
           ...c,
@@ -160,7 +161,7 @@ function Index() {
             .filter((g) => g.items.length > 0),
         }))
         .filter((c) => c.groups.length > 0)
-    : menu;
+    : menu), [menu, normalizedSearch]);
 
   return (
     <div className="min-h-screen">
