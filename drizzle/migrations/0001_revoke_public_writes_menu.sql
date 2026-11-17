@@ -1,0 +1,2 @@
+REVOKE INSERT, UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER ON public.categories, public.products FROM anon, authenticated, PUBLIC;
+GRANT SELECT ON public.categories, public.products TO anon, authenticated;
