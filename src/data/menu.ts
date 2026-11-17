@@ -14,8 +14,8 @@ export const menu: Category[] = [
     { name: "Asa de Frango Crocante (5 unidades)", price: "28,00", description: acomp },
   ] }] },
   { id: "parmegiana", label: "À Parmegiana", title: "À Parmegiana", note: "Acompanham: macarrão, batata frita e salada da rainha ou salada crua", groups: [{ items: [
-    { name: "Carne à Parmegiana", price: "32,00", description: "Filé bovino empanado com molho especial e queijo gratinado." },
-    { name: "Frango à Parmegiana", price: "28,00", description: "Filé de frango empanado, coberto com queijo derretido e molho de tomate caseiro." },
+    { name: "Carne à Parmegiana", price: "32,00" },
+    { name: "Frango à Parmegiana", price: "28,00" },
   ] }] },
   { id: "caldinhos", label: "Caldinhos", title: "Caldinhos", note: "Receitas tradicionais servidas bem quentes", groups: [{ items: [
     { name: "Caldinhos Tradicionais", price: "12,00", description: "Nordestino • Feijão • Cabeça de Galo • Quenga" },
@@ -24,13 +24,13 @@ export const menu: Category[] = [
   { id: "petiscos", label: "Petiscos & Combos", title: "Petiscos & Combos", groups: [
     { title: "Combos", items: [
       { name: "Combo Petisco da Rainha (Simples)", tag: "Combo da Casa", price: "25,00", description: "1 Porção de Batata Frita Simples + 1 Porção de Frango Crocante (5 unidades)." },
-      { name: "Combo Petisco da Rainha (Especial)", tag: "Combo Especial", price: "32,00", description: "1 Porção de Batata Frita com Cheddar e Bacon + 1 Porção de Frango Crocante (5 unidades)." },
+      { name: "Combo Petisco da Rainha (Especial Cheddar e Bacon)", tag: "Combo Especial", price: "32,00", description: "1 Porção de Batata Frita com Cheddar e Bacon + 1 Porção de Frango Crocante (5 unidades)." },
     ] },
     { title: "Petiscos", items: [
       { name: "Batata Frita Simples", price: "12,00", description: "Porção crocante e sequinha, frita na hora." },
       { name: "Batata Frita com Cheddar e Bacon", price: "18,00", description: "Porção de batata frita coberta com cheddar cremoso e cubos de bacon crocante." },
-      { name: "Porção de Frango Crocante (5 un)", price: "18,00", description: "Asinhas de frango empanadas e super crocantes." },
-      { name: "Porção de Frango Crocante (10 un)", tag: "Família", price: "35,00", description: "Porção tamanho família com 10 asinhas de frango empanadas e crocantes." },
+      { name: "Porção de Frango Crocante (5 unidades)", price: "18,00", description: "Asinhas de frango empanadas e super crocantes." },
+      { name: "Porção de Frango Crocante (10 unidades)", tag: "Família", price: "35,00", description: "Porção tamanho família com 10 asinhas de frango empanadas e crocantes." },
       { name: "Pão de Alho (Unidade)", price: "8,00", description: "Pão dourado na brasa com creme de alho especial da casa." },
       { name: "Porção de Pão de Alho (3 unidades)", price: "22,00", description: "Três unidades de pão de alho dourados na brasa com desconto especial." },
     ] },
@@ -38,7 +38,7 @@ export const menu: Category[] = [
   { id: "porcoes", label: "Porções", title: "Porções e Adicionais", groups: [{ items: [
     { name: "Feijão", price: "10,00" }, { name: "Arroz", price: "8,00" }, { name: "Macarrão", price: "8,00" },
     { name: "Pirão", price: "8,00" }, { name: "Farofa", price: "3,00" },
-    { name: "Frango Crocante", price: "5,00", note: "unidade" }, { name: "Linguiça Toscana", price: "5,00", note: "unidade" },
+    { name: "Frango Crocante (unidade)", price: "5,00" }, { name: "Linguiça Toscana (unidade)", price: "5,00" },
     { name: "Molho da Casa", price: "3,00" },
   ] }] },
   { id: "bebidas", label: "Bebidas", title: "Bebidas & Cervejas", groups: [
