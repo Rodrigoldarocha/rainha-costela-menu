@@ -174,10 +174,8 @@
   opacity: 0.8;
 }
 @utility brand-frame {
-  padding: 0; border-radius: 0.75rem;
-  background: transparent;
-  box-shadow: 0 20px 45px -18px oklch(0 0 0 / 65%);
-  & > img { border-radius: 0.75rem; }
+  padding: 0; border-radius: 0; background: transparent; box-shadow: none;
+  & > img { border-radius: 0; }
 }
 /* Hide Lovable badge */
 #lovable-badge {
