@@ -1,23 +1,128 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useRef, useState } from "react";
+import logo from "@/assets/rainha-logo.png.asset.json";
+import { menu, type MenuItem } from "@/data/menu";
 
-// The home route ships no og:image, so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "Cardápio | Rainha da Costela — O simples que encanta" },
+      { name: "description", content: "Cardápio digital da Rainha da Costela: pratos, parmegianas, caldinhos, petiscos e bebidas. Rua Barros Barreto, 376 • Santo Amaro – PE." },
+      { property: "og:title", content: "Cardápio | Rainha da Costela" },
+      { property: "og:description", content: "O simples que encanta. Confira nosso cardápio completo." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
+const ADDRESS = "Rua Barros Barreto, 376 • Santo Amaro – PE";
+
+function Ornament() {
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
+    <div className="flex items-center justify-center gap-3" aria-hidden>
+      <span className="ornament-line w-16" />
+      <span className="size-1.5 rotate-45 bg-gold" />
+      <span className="ornament-line w-16" />
+    </div>
+  );
+}
+
+function Item({ item }: { item: MenuItem }) {
+  return (
+    <li className="py-5 first:pt-0 last:pb-0">
+      {item.tag && (
+        <span className="mb-1.5 inline-block font-display text-[10px] tracking-[0.25em] uppercase text-gold">{item.tag}</span>
+      )}
+      <div className="flex items-baseline gap-3">
+        <h3 className="font-serif text-[1.35rem] leading-tight font-semibold text-foreground">{item.name}</h3>
+        <span className="leader" aria-hidden />
+        <p className="shrink-0 font-display text-base font-semibold text-gold-soft whitespace-nowrap">
+          <span className="mr-0.5 text-xs text-gold">R$</span>{item.price}
+        </p>
+      </div>
+      {(item.description || item.note) && (
+        <p className="mt-1.5 max-w-[34rem] text-sm leading-relaxed text-muted-foreground">{item.description ?? item.note}</p>
+      )}
+    </li>
+  );
+}
+
+function Index() {
+  const [active, setActive] = useState("pratos");
+  const navRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const obs = new IntersectionObserver(
+      (entries) => entries.forEach((e) => e.isIntersecting && setActive(e.target.id)),
+      { rootMargin: "-35% 0px -60% 0px" },
+    );
+    menu.forEach((c) => { const el = document.getElementById(c.id); if (el) obs.observe(el); });
+    return () => obs.disconnect();
+  }, []);
+
+  useEffect(() => {
+    navRef.current?.querySelector<HTMLElement>(`[data-id="${active}"]`)?.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
+  }, [active]);
+
+  return (
+    <div className="min-h-screen">
+      <header className="px-6 pt-10 pb-8 text-center">
+        <img src={logo.url} alt="Logo Rainha da Costela" className="mx-auto h-28 w-auto rounded-sm object-contain sm:h-32" />
+        <p className="mt-5 font-display text-[11px] tracking-[0.35em] uppercase text-gold">O simples que encanta</p>
+        <h1 className="mt-2 font-display text-3xl font-bold tracking-[0.08em] text-foreground sm:text-4xl">Rainha da Costela</h1>
+        <div className="mt-5"><Ornament /></div>
+        <p className="mt-4 text-xs tracking-wide text-muted-foreground">{ADDRESS}</p>
+      </header>
+
+      <nav className="sticky top-0 z-20 border-y border-border bg-background/90 backdrop-blur-md">
+        <div ref={navRef} className="no-scrollbar mx-auto flex max-w-3xl gap-1 overflow-x-auto px-4 py-3">
+          {menu.map((c) => (
+            <a
+              key={c.id}
+              data-id={c.id}
+              href={`#${c.id}`}
+              className={`shrink-0 rounded-sm border px-4 py-2 font-display text-[11px] tracking-[0.15em] uppercase transition-colors ${
+                active === c.id ? "border-gold bg-gold text-primary-foreground" : "border-transparent text-muted-foreground hover:text-gold-soft"
+              }`}
+            >
+              {c.label}
+            </a>
+          ))}
+        </div>
+      </nav>
+
+      <main className="mx-auto max-w-3xl px-5 pb-16 sm:px-8">
+        {menu.map((c) => (
+          <section key={c.id} id={c.id} className="scroll-mt-20 pt-12">
+            <div className="mb-7 text-center">
+              <h2 className="font-display text-xl font-semibold tracking-[0.2em] uppercase text-gold">{c.title}</h2>
+              <div className="mt-3"><Ornament /></div>
+              {c.note && <p className="mt-3 font-serif text-base italic text-muted-foreground">* {c.note}</p>}
+            </div>
+            <div className="space-y-8">
+              {c.groups.map((g, i) => (
+                <div key={i} className="rounded-sm border border-border bg-card/60 p-5 sm:p-7">
+                  {g.title && (
+                    <h3 className="mb-5 border-b border-border pb-3 font-display text-xs tracking-[0.25em] uppercase text-gold-soft">{g.title}</h3>
+                  )}
+                  <ul className="divide-y divide-border">
+                    {g.items.map((it) => <Item key={it.name} item={it} />)}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </section>
+        ))}
+      </main>
+
+      <footer className="border-t border-border bg-wood px-6 py-10 text-center">
+        <p className="font-display text-lg tracking-[0.12em] text-foreground">Rainha da Costela</p>
+        <p className="mt-2 text-sm text-muted-foreground">{ADDRESS}</p>
+        <div className="my-4"><Ornament /></div>
+        <p className="font-serif text-base italic text-gold-soft">O simples que encanta</p>
+      </footer>
     </div>
   );
 }
