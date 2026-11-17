@@ -50,9 +50,9 @@ function Ornament() {
 }
 
 function Item({ item }: { item: MenuItem }) {
-  const nameMatch = item.name.match(/^(.*?)(\\s*\\([^)]*\\))\\s*$/);
-  const primaryName = nameMatch ? nameMatch[1].trim() : item.name;
-  const nameDetail = nameMatch ? nameMatch[2].trim() : null;
+  const nameMatch = item.name.match(/^(.*?)(\s*\([^)]*\))\s*$/);
+  const primaryName = nameMatch ? nameMatch[1]!.trim() : item.name;
+  const nameDetail = nameMatch ? nameMatch[2]!.trim() : null;
   return (
     <li className="py-5 first:pt-0 last:pb-0">
       {item.tag && (
