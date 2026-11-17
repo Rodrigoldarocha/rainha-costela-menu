@@ -50,18 +50,22 @@ function Ornament() {
 }
 
 function Item({ item }: { item: MenuItem }) {
+  const nameMatch = item.name.match(/^(.*?)(\\s*\\([^)]*\\))\\s*$/);
+  const primaryName = nameMatch ? nameMatch[1].trim() : item.name;
+  const nameDetail = nameMatch ? nameMatch[2].trim() : null;
   return (
     <li className="py-5 first:pt-0 last:pb-0">
       {item.tag && (
         <span className="mb-1.5 inline-block font-display text-[10px] tracking-[0.25em] uppercase text-gold">{item.tag}</span>
       )}
       <div className="flex items-baseline gap-3">
-        <h4 className="font-serif text-[1.35rem] leading-tight font-semibold text-foreground">{item.name}</h4>
+        <h4 className="min-w-0 font-serif text-[1.35rem] leading-tight font-semibold text-foreground text-pretty break-words">{primaryName}</h4>
         <span className="leader" aria-hidden />
         <p className="shrink-0 font-display text-base font-semibold text-gold-soft whitespace-nowrap tabular-nums">
           <span className="mr-0.5 text-xs text-gold">R$</span>{item.price}
         </p>
       </div>
+      {nameDetail && <p className="mt-0.5 text-xs text-muted-foreground">{nameDetail}</p>}
       {item.description && (
         <p className="mt-1.5 max-w-[34rem] text-sm leading-relaxed text-muted-foreground">{item.description}</p>
       )}
