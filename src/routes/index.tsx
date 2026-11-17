@@ -290,9 +290,6 @@ function Index() {
         <p className="mt-2 text-sm text-muted-foreground">{ADDRESS}</p>
         <div className="my-4"><Ornament /></div>
         <p className="font-serif text-base italic text-gold-soft">O simples que encanta</p>
-        <div className="mt-6 space-y-1 text-xs text-muted-foreground">
-          <p>Atendimento no salão e retirada. Consulte horários e formas de pagamento no local.</p>
-        </div>
       </footer>
     </div>
   );
