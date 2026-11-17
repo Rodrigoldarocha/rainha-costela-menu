@@ -84,12 +84,31 @@ function Index() {
 
   return (
     <div className="min-h-screen">
-      <header className="px-6 pt-10 pb-8 text-center">
-        <img src={logo.url} alt="Logo Rainha da Costela" className="mx-auto h-28 w-auto rounded-sm object-contain sm:h-32" />
-        <p className="mt-5 font-display text-[11px] tracking-[0.35em] uppercase text-gold">O simples que encanta</p>
-        <h1 className="mt-2 font-display text-3xl font-bold tracking-[0.08em] text-foreground sm:text-4xl">Rainha da Costela</h1>
-        <div className="mt-5"><Ornament /></div>
-        <p className="mt-4 text-xs tracking-wide text-muted-foreground">{ADDRESS}</p>
+      <header className="brand-stage relative overflow-hidden px-6 pt-10 pb-10 text-center sm:pt-14 sm:pb-12">
+        <div className="relative mx-auto w-fit">
+          <div className="brand-halo" aria-hidden />
+          <div className="brand-frame relative">
+            <img
+              src={logo.url}
+              alt="Logo Rainha da Costela"
+              width={512}
+              height={341}
+              decoding="async"
+              fetchPriority="high"
+              className="block h-auto w-[15rem] object-contain sm:w-[19rem] lg:w-[21rem]"
+            />
+          </div>
+        </div>
+        <h1 className="mt-7 font-display text-[1.9rem] leading-none font-bold tracking-[0.1em] text-foreground sm:text-5xl">
+          Rainha da Costela
+        </h1>
+        <div className="mx-auto mt-4 flex max-w-xs items-center justify-center gap-3" aria-hidden>
+          <span className="ornament-line flex-1" />
+          <span className="size-1.5 rotate-45 bg-gold" />
+          <span className="ornament-line flex-1" />
+        </div>
+        <p className="mt-3 font-serif text-xl italic text-gold-soft sm:text-2xl">O simples que encanta</p>
+        <p className="mt-5 text-xs tracking-wide text-muted-foreground">{ADDRESS}</p>
       </header>
 
       <nav className="sticky top-0 z-20 border-y border-border bg-background/90 backdrop-blur-md">
