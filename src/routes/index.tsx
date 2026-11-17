@@ -53,8 +53,12 @@ function Item({ item }: { item: MenuItem }) {
   const nameMatch = item.name.match(/^(.*?)(\s*\([^)]*\))\s*$/);
   const primaryName = nameMatch ? nameMatch[1]!.trim() : item.name;
   const nameDetail = nameMatch ? nameMatch[2]!.trim() : null;
+  const isSignature = item.tag === "Especial" || /costela no bafo/i.test(item.name) || /combo petisco da rainha/i.test(item.name);
   return (
-    <li className="py-6 first:pt-0 last:pb-0">
+    <li className={`py-6 first:pt-0 last:pb-0 ${isSignature ? "rounded-sm border border-gold/25 bg-gold/5 p-4 -mx-2" : ""}`}>
+      {isSignature && (
+        <span className="mb-2 inline-block font-display text-[10px] tracking-[0.25em] uppercase text-gold">Especialidade da Rainha</span>
+      )}
       {item.tag && (
         <span className="mb-1.5 inline-block font-display text-[10px] tracking-[0.25em] uppercase text-gold">{item.tag}</span>
       )}
@@ -106,6 +110,8 @@ function Index() {
   const { data: menu } = useSuspenseQuery(menuQuery);
   const qc = useQueryClient();
   const [active, setActive] = useState(menu[0]?.id ?? "");
+  const [search, setSearch] = useState("");
+  const [showTop, setShowTop] = useState(false);
 
   useEffect(() => {
     const ch = supabase
@@ -130,6 +136,31 @@ function Index() {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     navRef.current?.querySelector<HTMLElement>(`[data-id="${active}"]`)?.scrollIntoView({ inline: "center", block: "nearest", behavior: reducedMotion ? "auto" : "smooth" });
   }, [active]);
+
+  useEffect(() => {
+    const onScroll = () => setShowTop(window.scrollY > 400);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const normalizedSearch = search.trim().toLowerCase();
+  const filteredMenu = normalizedSearch
+    ? menu
+        .map((c) => ({
+          ...c,
+          groups: c.groups
+            .map((g) => ({
+              ...g,
+              items: g.items.filter((it) =>
+                [it.name, it.description ?? "", it.tag ?? "", c.label, c.title].some((value) =>
+                  value.toLowerCase().includes(normalizedSearch),
+                ),
+              ),
+            }))
+            .filter((g) => g.items.length > 0),
+        }))
+        .filter((c) => c.groups.length > 0)
+    : menu;
 
   return (
     <div className="min-h-screen">
@@ -184,11 +215,24 @@ function Index() {
         </div>
         <p className="mt-4 font-serif text-xl italic text-gold-soft sm:text-3xl">O simples que encanta</p>
         <p className="mt-6 text-[11px] tracking-[0.25em] uppercase text-muted-foreground">{ADDRESS}</p>
+        <p className="mx-auto mt-4 max-w-md font-serif text-sm italic leading-relaxed text-muted-foreground">
+          Preparo artesanal e fogo lento. Aprecie sem pressa.
+        </p>
+        <div className="mx-auto mt-6 max-w-md px-4">
+          <input
+            type="search"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Buscar prato, caldinho ou bebida..."
+            className="w-full rounded-full border border-gold/20 bg-card/60 px-4 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/40"
+            aria-label="Buscar no cardápio"
+          />
+        </div>
       </header>
 
       <nav aria-label="Categorias" className="sticky top-0 z-20 border-y border-border bg-background/90 backdrop-blur-md">
         <div ref={navRef} className="no-scrollbar mx-auto flex max-w-3xl gap-2 overflow-x-auto px-4 py-4">
-          {menu.map((c) => (
+          {filteredMenu.map((c) => (
             <a
               key={c.id}
               data-id={c.id}
@@ -205,9 +249,9 @@ function Index() {
       </nav>
 
       <main id="main-content" className="mx-auto max-w-3xl px-5 pb-20 sm:px-8">
-        {menu.length === 0 ? (
+        {filteredMenu.length === 0 ? (
           <p className="py-16 text-center text-muted-foreground">Cardápio indisponível no momento.</p>
-        ) : menu.map((c) => (
+        ) : filteredMenu.map((c) => (
           <section key={c.id} id={c.id} className="scroll-mt-24 pt-16 motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-2 motion-safe:duration-500">
             <div className="mb-7 text-center">
               <h2 className="font-display text-2xl font-semibold tracking-[0.24em] uppercase text-gold">{c.title}</h2>
@@ -216,7 +260,7 @@ function Index() {
             </div>
             <div className="space-y-8">
               {c.groups.map((g, i) => (
-                <div key={i} className="rounded-sm border border-gold/15 bg-card/70 p-6 shadow-[0_18px_50px_-24px_oklch(0_0_0/0.7)] sm:p-8">
+                <div key={i} className="corner-ornament rounded-sm border border-gold/15 bg-card/70 p-6 shadow-[0_18px_50px_-24px_oklch(0_0_0/0.7)] sm:p-8">
                   {g.title && (
                     <h3 className="mb-6 border-b border-gold/15 pb-3 font-display text-[11px] tracking-[0.3em] uppercase text-gold-soft">{g.title}</h3>
                   )}
@@ -230,11 +274,25 @@ function Index() {
         ))}
       </main>
 
+      {showTop && (
+        <button
+          type="button"
+          onClick={() => window.scrollTo({ top: 0, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" })}
+          className="fixed bottom-5 right-5 z-30 flex size-11 items-center justify-center rounded-full border border-gold/40 bg-background/80 text-gold backdrop-blur-md transition hover:bg-gold/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+          aria-label="Voltar ao topo"
+        >
+          ↑
+        </button>
+      )}
+
       <footer className="border-t border-gold/15 bg-wood px-6 py-12 text-center">
         <p className="font-display text-lg tracking-[0.12em] text-foreground">Rainha da Costela</p>
         <p className="mt-2 text-sm text-muted-foreground">{ADDRESS}</p>
         <div className="my-4"><Ornament /></div>
         <p className="font-serif text-base italic text-gold-soft">O simples que encanta</p>
+        <div className="mt-6 space-y-1 text-xs text-muted-foreground">
+          <p>Atendimento no salão e retirada. Consulte horários e formas de pagamento no local.</p>
+        </div>
       </footer>
     </div>
   );

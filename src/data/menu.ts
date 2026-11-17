@@ -11,7 +11,7 @@ const clean = (v: unknown, max = 300): string | null => {
   const t = v.replace(/[\u0000-\u001F\u007F<>]/g, "").replace(/\s+/g, " ").trim().slice(0, max);
   return t || null;
 };
-const brl = (n: number) => !Number.isFinite(n) || n < 0 ? "—" : n.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const brl = (n: number) => (!Number.isFinite(n) || n < 0 ? "—" : n.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
 
 export async function fetchMenu(): Promise<Category[]> {
   const [cats, prods] = await Promise.all([
