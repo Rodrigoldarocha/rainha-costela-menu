@@ -1,7 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import logo from "@/assets/rainha-logo.png.asset.json";
-import { menu, type MenuItem } from "@/data/menu";
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { menuQuery, type MenuItem } from "@/data/menu";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -14,7 +16,10 @@ export const Route = createFileRoute("/")({
       { name: "twitter:card", content: "summary" },
     ],
   }),
+  loader: ({ context }) => context.queryClient.ensureQueryData(menuQuery),
   component: Index,
+  errorComponent: () => <p className="p-10 text-center text-muted-foreground">Não foi possível carregar o cardápio. Tente novamente.</p>,
+  notFoundComponent: () => <p className="p-10 text-center text-muted-foreground">Cardápio indisponível.</p>,
 });
 
 const ADDRESS = "Rua Barros Barreto, 376 • Santo Amaro – PE";
@@ -42,15 +47,26 @@ function Item({ item }: { item: MenuItem }) {
           <span className="mr-0.5 text-xs text-gold">R$</span>{item.price}
         </p>
       </div>
-      {(item.description || item.note) && (
-        <p className="mt-1.5 max-w-[34rem] text-sm leading-relaxed text-muted-foreground">{item.description ?? item.note}</p>
+      {item.description && (
+        <p className="mt-1.5 max-w-[34rem] text-sm leading-relaxed text-muted-foreground">{item.description}</p>
       )}
     </li>
   );
 }
 
 function Index() {
-  const [active, setActive] = useState("pratos");
+  const { data: menu } = useSuspenseQuery(menuQuery);
+  const qc = useQueryClient();
+  const [active, setActive] = useState(menu[0]?.id ?? "");
+
+  useEffect(() => {
+    const ch = supabase
+      .channel(`menu-${Math.random().toString(36).slice(2)}`)
+      .on("postgres_changes", { event: "*", schema: "public", table: "products" }, () => qc.invalidateQueries({ queryKey: ["menu"] }))
+      .on("postgres_changes", { event: "*", schema: "public", table: "categories" }, () => qc.invalidateQueries({ queryKey: ["menu"] }))
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [qc]);
   const navRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -60,7 +76,7 @@ function Index() {
     );
     menu.forEach((c) => { const el = document.getElementById(c.id); if (el) obs.observe(el); });
     return () => obs.disconnect();
-  }, []);
+  }, [menu]);
 
   useEffect(() => {
     navRef.current?.querySelector<HTMLElement>(`[data-id="${active}"]`)?.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
@@ -108,7 +124,7 @@ function Index() {
                     <h3 className="mb-5 border-b border-border pb-3 font-display text-xs tracking-[0.25em] uppercase text-gold-soft">{g.title}</h3>
                   )}
                   <ul className="divide-y divide-border">
-                    {g.items.map((it) => <Item key={it.name} item={it} />)}
+                    {g.items.map((it) => <Item key={it.id} item={it} />)}
                   </ul>
                 </div>
               ))}

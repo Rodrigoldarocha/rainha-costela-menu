@@ -28,3 +28,5 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+- Menu content lives in the database (categories, products) and is read publicly; the site has no admin UI by design — edits happen in the database and reach the page via live updates.
