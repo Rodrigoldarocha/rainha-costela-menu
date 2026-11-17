@@ -36,3 +36,5 @@ export async function fetchMenu(): Promise<Category[]> {
 }
 
 export const menuQuery = queryOptions({ queryKey: ["menu"], queryFn: fetchMenu, staleTime: 60_000 });
+
+export { clean as cleanText, brl };

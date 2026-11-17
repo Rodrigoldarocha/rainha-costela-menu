@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useRouter, type ErrorComponentProps } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import logo from "@/assets/rainha-logo.png.asset.json";
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
@@ -33,7 +33,7 @@ export const Route = createFileRoute("/")({
   ),
   pendingMs: 150,
   component: Index,
-  errorComponent: () => <p className="p-10 text-center text-muted-foreground">Não foi possível carregar o cardápio. Tente novamente.</p>,
+  errorComponent: RouteErrorComponent,
   notFoundComponent: () => <p className="p-10 text-center text-muted-foreground">Cardápio indisponível.</p>,
 });
 
@@ -73,6 +73,35 @@ function Item({ item }: { item: MenuItem }) {
   );
 }
 
+function RouteErrorComponent({ reset }: ErrorComponentProps) {
+  const router = useRouter();
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-background px-4">
+      <div className="max-w-md text-center">
+        <h1 className="text-xl font-semibold tracking-tight text-foreground">Não foi possível carregar o cardápio</h1>
+        <p className="mt-2 text-sm text-muted-foreground">Tente novamente ou volte ao início.</p>
+        <div className="mt-6 flex flex-wrap justify-center gap-2">
+          <button
+            onClick={() => {
+              router.invalidate();
+              reset();
+            }}
+            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+          >
+            Tentar novamente
+          </button>
+          <a
+            href="/"
+            className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+          >
+            Voltar ao cardápio
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function Index() {
   const { data: menu } = useSuspenseQuery(menuQuery);
   const qc = useQueryClient();
@@ -98,7 +127,8 @@ function Index() {
   }, [menu]);
 
   useEffect(() => {
-    navRef.current?.querySelector<HTMLElement>(`[data-id="${active}"]`)?.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    navRef.current?.querySelector<HTMLElement>(`[data-id="${active}"]`)?.scrollIntoView({ inline: "center", block: "nearest", behavior: reducedMotion ? "auto" : "smooth" });
   }, [active]);
 
   return (
