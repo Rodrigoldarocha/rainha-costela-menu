@@ -35,4 +35,4 @@ export async function fetchMenu(): Promise<Category[]> {
   }).filter((c) => c.groups.length > 0);
 }
 
-export const menuQuery = queryOptions({ queryKey: ["menu"], queryFn: fetchMenu });
+export const menuQuery = queryOptions({ queryKey: ["menu"], queryFn: fetchMenu, staleTime: 60_000 });

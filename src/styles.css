@@ -155,7 +155,9 @@
     background-image: radial-gradient(ellipse at top, oklch(0.24 0.03 55 / 70%), transparent 60%),
       repeating-linear-gradient(90deg, oklch(1 0 0 / 1.2%) 0 1px, transparent 1px 7px);
     background-attachment: fixed; }
+  @media (prefers-reduced-motion: no-preference) {
   html { scroll-behavior: smooth; }
+}
 }
 @utility no-scrollbar { scrollbar-width: none; &::-webkit-scrollbar { display: none; } }
 @utility leader { flex: 1; border-bottom: 1px dotted color-mix(in oklab, var(--gold) 35%, transparent); transform: translateY(-0.3em); min-width: 1rem; }

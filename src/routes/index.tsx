@@ -17,6 +17,8 @@ export const Route = createFileRoute("/")({
     ],
   }),
   loader: ({ context }) => context.queryClient.ensureQueryData(menuQuery),
+  pendingComponent: () => <p className="p-10 text-center text-muted-foreground">Carregando cardápio...</p>,
+  pendingMs: 150,
   component: Index,
   errorComponent: () => <p className="p-10 text-center text-muted-foreground">Não foi possível carregar o cardápio. Tente novamente.</p>,
   notFoundComponent: () => <p className="p-10 text-center text-muted-foreground">Cardápio indisponível.</p>,
@@ -41,7 +43,7 @@ function Item({ item }: { item: MenuItem }) {
         <span className="mb-1.5 inline-block font-display text-[10px] tracking-[0.25em] uppercase text-gold">{item.tag}</span>
       )}
       <div className="flex items-baseline gap-3">
-        <h3 className="font-serif text-[1.35rem] leading-tight font-semibold text-foreground">{item.name}</h3>
+        <h4 className="font-serif text-[1.35rem] leading-tight font-semibold text-foreground">{item.name}</h4>
         <span className="leader" aria-hidden />
         <p className="shrink-0 font-display text-base font-semibold text-gold-soft whitespace-nowrap">
           <span className="mr-0.5 text-xs text-gold">R$</span>{item.price}
@@ -84,6 +86,12 @@ function Index() {
 
   return (
     <div className="min-h-screen">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-sm focus:bg-background focus:px-3 focus:py-2 focus:text-sm focus:text-foreground focus:ring-2 focus:ring-gold"
+      >
+        Pular para o cardápio
+      </a>
       <header className="brand-stage relative overflow-hidden px-6 pt-10 pb-10 text-center sm:pt-14 sm:pb-12">
         <div className="relative mx-auto w-fit">
           <div className="brand-halo" aria-hidden />
@@ -111,14 +119,15 @@ function Index() {
         <p className="mt-5 text-xs tracking-wide text-muted-foreground">{ADDRESS}</p>
       </header>
 
-      <nav className="sticky top-0 z-20 border-y border-border bg-background/90 backdrop-blur-md">
+      <nav aria-label="Categorias" className="sticky top-0 z-20 border-y border-border bg-background/90 backdrop-blur-md">
         <div ref={navRef} className="no-scrollbar mx-auto flex max-w-3xl gap-1 overflow-x-auto px-4 py-3">
           {menu.map((c) => (
             <a
               key={c.id}
               data-id={c.id}
               href={`#${c.id}`}
-              className={`shrink-0 rounded-sm border px-4 py-2 font-display text-[11px] tracking-[0.15em] uppercase transition-colors ${
+              aria-current={active === c.id ? "true" : undefined}
+              className={`shrink-0 rounded-sm border px-4 py-3 font-display text-[11px] tracking-[0.15em] uppercase transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold ${
                 active === c.id ? "border-gold bg-gold text-primary-foreground" : "border-transparent text-muted-foreground hover:text-gold-soft"
               }`}
             >
@@ -128,8 +137,10 @@ function Index() {
         </div>
       </nav>
 
-      <main className="mx-auto max-w-3xl px-5 pb-16 sm:px-8">
-        {menu.map((c) => (
+      <main id="main-content" className="mx-auto max-w-3xl px-5 pb-16 sm:px-8">
+        {menu.length === 0 ? (
+          <p className="py-16 text-center text-muted-foreground">Cardápio indisponível no momento.</p>
+        ) : menu.map((c) => (
           <section key={c.id} id={c.id} className="scroll-mt-20 pt-12">
             <div className="mb-7 text-center">
               <h2 className="font-display text-xl font-semibold tracking-[0.2em] uppercase text-gold">{c.title}</h2>
