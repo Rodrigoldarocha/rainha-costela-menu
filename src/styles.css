@@ -169,8 +169,15 @@
     linear-gradient(180deg, oklch(0.11 0.006 50), transparent);
 }
 @utility brand-halo {
-  position: absolute; inset: -18%; border-radius: 9999px; filter: blur(28px);
-  background: radial-gradient(closest-side, color-mix(in oklab, var(--gold) 28%, transparent), transparent);
+  position: absolute; inset: -22%; border-radius: 9999px; filter: blur(40px);
+  background: radial-gradient(closest-side, color-mix(in oklab, var(--gold) 16%, transparent), transparent 72%);
+  opacity: 0.8;
+}
+@utility brand-frame {
+  padding: 0; border-radius: 0.75rem;
+  background: transparent;
+  box-shadow: 0 20px 45px -18px oklch(0 0 0 / 65%);
+  & > img { border-radius: 0.75rem; }
 }
 /* Hide Lovable badge */
 #lovable-badge {
