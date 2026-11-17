@@ -116,7 +116,7 @@ function Index() {
               height={341}
               decoding="async"
               fetchPriority="high"
-              className="block h-24 w-auto object-contain mix-blend-lighten sm:h-28 lg:h-32"
+              className="block h-32 w-auto object-contain mix-blend-lighten sm:h-40 lg:h-44"
             />
           </div>
         </div>
