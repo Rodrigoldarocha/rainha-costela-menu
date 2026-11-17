@@ -17,7 +17,20 @@ export const Route = createFileRoute("/")({
     ],
   }),
   loader: ({ context }) => context.queryClient.ensureQueryData(menuQuery),
-  pendingComponent: () => <p className="p-10 text-center text-muted-foreground">Carregando cardápio...</p>,
+  pendingComponent: () => (
+    <div className="mx-auto max-w-3xl px-5 py-16 sm:px-8" aria-busy="true" aria-live="polite">
+      <div className="mb-10 h-8 w-48 animate-pulse rounded bg-muted mx-auto" />
+      <div className="space-y-6">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div key={i} className="space-y-3">
+            <div className="h-5 w-32 animate-pulse rounded bg-muted" />
+            <div className="h-4 w-full animate-pulse rounded bg-muted/70" />
+            <div className="h-4 w-5/6 animate-pulse rounded bg-muted/70" />
+          </div>
+        ))}
+      </div>
+    </div>
+  ),
   pendingMs: 150,
   component: Index,
   errorComponent: () => <p className="p-10 text-center text-muted-foreground">Não foi possível carregar o cardápio. Tente novamente.</p>,
@@ -45,7 +58,7 @@ function Item({ item }: { item: MenuItem }) {
       <div className="flex items-baseline gap-3">
         <h4 className="font-serif text-[1.35rem] leading-tight font-semibold text-foreground">{item.name}</h4>
         <span className="leader" aria-hidden />
-        <p className="shrink-0 font-display text-base font-semibold text-gold-soft whitespace-nowrap">
+        <p className="shrink-0 font-display text-base font-semibold text-gold-soft whitespace-nowrap tabular-nums">
           <span className="mr-0.5 text-xs text-gold">R$</span>{item.price}
         </p>
       </div>
@@ -127,8 +140,8 @@ function Index() {
               data-id={c.id}
               href={`#${c.id}`}
               aria-current={active === c.id ? "true" : undefined}
-              className={`shrink-0 rounded-sm border px-4 py-3 font-display text-[11px] tracking-[0.15em] uppercase transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold ${
-                active === c.id ? "border-gold bg-gold text-primary-foreground" : "border-transparent text-muted-foreground hover:text-gold-soft"
+              className={`shrink-0 rounded-sm border px-4 py-3 font-display text-[11px] tracking-[0.15em] uppercase transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold ${
+                active === c.id ? "border-gold bg-gold/10 text-gold-soft shadow-sm" : "border-transparent text-muted-foreground hover:border-gold/30 hover:text-gold-soft"
               }`}
             >
               {c.label}
@@ -141,7 +154,7 @@ function Index() {
         {menu.length === 0 ? (
           <p className="py-16 text-center text-muted-foreground">Cardápio indisponível no momento.</p>
         ) : menu.map((c) => (
-          <section key={c.id} id={c.id} className="scroll-mt-20 pt-12">
+          <section key={c.id} id={c.id} className="scroll-mt-20 pt-12 motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-2 motion-safe:duration-500">
             <div className="mb-7 text-center">
               <h2 className="font-display text-xl font-semibold tracking-[0.2em] uppercase text-gold">{c.title}</h2>
               <div className="mt-3"><Ornament /></div>
