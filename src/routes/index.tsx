@@ -239,8 +239,8 @@ function Index() {
               data-id={c.id}
               href={`#${c.id}`}
               aria-current={active === c.id ? "true" : undefined}
-              className={`shrink-0 rounded-sm border px-4 py-3 font-display text-[11px] tracking-[0.15em] uppercase transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold ${
-                active === c.id ? "border-gold bg-gold text-primary-foreground" : "border-transparent text-muted-foreground hover:text-gold-soft"
+              className={`shrink-0 rounded-full px-4 py-2.5 font-display text-[11px] tracking-[0.15em] uppercase transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold ${
+                active === c.id ? "bg-gold text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-gold-soft"
               }`}
             >
               {c.label}
