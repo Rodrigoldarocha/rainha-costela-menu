@@ -54,7 +54,7 @@ function Item({ item }: { item: MenuItem }) {
   const primaryName = nameMatch ? nameMatch[1]!.trim() : item.name;
   const nameDetail = nameMatch ? nameMatch[2]!.trim() : null;
   return (
-    <li className="py-5 first:pt-0 last:pb-0">
+    <li className="py-6 first:pt-0 last:pb-0">
       {item.tag && (
         <span className="mb-1.5 inline-block font-display text-[10px] tracking-[0.25em] uppercase text-gold">{item.tag}</span>
       )}
@@ -133,13 +133,33 @@ function Index() {
 
   return (
     <div className="min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Restaurant",
+            name: "Rainha da Costela",
+            slogan: "O simples que encanta",
+            address: {
+              "@type": "PostalAddress",
+              streetAddress: "Rua Barros Barreto, 376",
+              addressLocality: "Santo Amaro",
+              addressRegion: "PE",
+              addressCountry: "BR",
+            },
+            servesCuisine: "Brazilian",
+            menu: "https://rainha-costela-menu.lovable.app/",
+          }),
+        }}
+      />
       <a
         href="#main-content"
         className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-sm focus:bg-background focus:px-3 focus:py-2 focus:text-sm focus:text-foreground focus:ring-2 focus:ring-gold"
       >
         Pular para o cardápio
       </a>
-      <header className="brand-stage relative overflow-hidden px-6 pt-10 pb-10 text-center sm:pt-14 sm:pb-12">
+      <header className="brand-stage relative overflow-hidden px-6 pt-12 pb-12 text-center sm:pt-20 sm:pb-16">
         <div className="relative mx-auto w-fit">
           <div className="brand-halo" aria-hidden />
           <div className="brand-frame relative">
@@ -154,7 +174,7 @@ function Index() {
             />
           </div>
         </div>
-        <h1 className="mt-7 font-display text-[1.9rem] leading-none font-bold tracking-[0.1em] text-foreground sm:text-5xl">
+        <h1 className="mt-8 font-display text-[2.1rem] leading-none font-bold tracking-[0.14em] text-foreground sm:text-6xl">
           Rainha da Costela
         </h1>
         <div className="mx-auto mt-4 flex max-w-xs items-center justify-center gap-3" aria-hidden>
@@ -162,20 +182,20 @@ function Index() {
           <span className="size-1.5 rotate-45 bg-gold" />
           <span className="ornament-line flex-1" />
         </div>
-        <p className="mt-3 font-serif text-xl italic text-gold-soft sm:text-2xl">O simples que encanta</p>
-        <p className="mt-5 text-xs tracking-wide text-muted-foreground">{ADDRESS}</p>
+        <p className="mt-4 font-serif text-xl italic text-gold-soft sm:text-3xl">O simples que encanta</p>
+        <p className="mt-6 text-[11px] tracking-[0.25em] uppercase text-muted-foreground">{ADDRESS}</p>
       </header>
 
       <nav aria-label="Categorias" className="sticky top-0 z-20 border-y border-border bg-background/90 backdrop-blur-md">
-        <div ref={navRef} className="no-scrollbar mx-auto flex max-w-3xl gap-1 overflow-x-auto px-4 py-3">
+        <div ref={navRef} className="no-scrollbar mx-auto flex max-w-3xl gap-2 overflow-x-auto px-4 py-4">
           {menu.map((c) => (
             <a
               key={c.id}
               data-id={c.id}
               href={`#${c.id}`}
               aria-current={active === c.id ? "true" : undefined}
-              className={`shrink-0 rounded-sm border px-4 py-3 font-display text-[11px] tracking-[0.15em] uppercase transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold ${
-                active === c.id ? "border-gold bg-gold/10 text-gold-soft shadow-sm" : "border-transparent text-muted-foreground hover:border-gold/30 hover:text-gold-soft"
+              className={`shrink-0 border-b-2 px-3 py-2 font-display text-[11px] tracking-[0.2em] uppercase transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold ${
+                active === c.id ? "border-gold text-gold-soft" : "border-transparent text-muted-foreground hover:text-gold-soft"
               }`}
             >
               {c.label}
@@ -184,21 +204,21 @@ function Index() {
         </div>
       </nav>
 
-      <main id="main-content" className="mx-auto max-w-3xl px-5 pb-16 sm:px-8">
+      <main id="main-content" className="mx-auto max-w-3xl px-5 pb-20 sm:px-8">
         {menu.length === 0 ? (
           <p className="py-16 text-center text-muted-foreground">Cardápio indisponível no momento.</p>
         ) : menu.map((c) => (
-          <section key={c.id} id={c.id} className="scroll-mt-20 pt-12 motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-2 motion-safe:duration-500">
+          <section key={c.id} id={c.id} className="scroll-mt-24 pt-16 motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-2 motion-safe:duration-500">
             <div className="mb-7 text-center">
-              <h2 className="font-display text-xl font-semibold tracking-[0.2em] uppercase text-gold">{c.title}</h2>
-              <div className="mt-3"><Ornament /></div>
-              {c.note && <p className="mt-3 font-serif text-base italic text-muted-foreground">* {c.note}</p>}
+              <h2 className="font-display text-2xl font-semibold tracking-[0.24em] uppercase text-gold">{c.title}</h2>
+              <div className="mt-4"><Ornament /></div>
+              {c.note && <p className="mt-4 font-serif text-base italic text-muted-foreground">* {c.note}</p>}
             </div>
             <div className="space-y-8">
               {c.groups.map((g, i) => (
-                <div key={i} className="rounded-sm border border-border bg-card/60 p-5 sm:p-7">
+                <div key={i} className="rounded-sm border border-gold/15 bg-card/70 p-6 shadow-[0_18px_50px_-24px_oklch(0_0_0/0.7)] sm:p-8">
                   {g.title && (
-                    <h3 className="mb-5 border-b border-border pb-3 font-display text-xs tracking-[0.25em] uppercase text-gold-soft">{g.title}</h3>
+                    <h3 className="mb-6 border-b border-gold/15 pb-3 font-display text-[11px] tracking-[0.3em] uppercase text-gold-soft">{g.title}</h3>
                   )}
                   <ul className="divide-y divide-border">
                     {g.items.map((it) => <Item key={it.id} item={it} />)}
@@ -210,7 +230,7 @@ function Index() {
         ))}
       </main>
 
-      <footer className="border-t border-border bg-wood px-6 py-10 text-center">
+      <footer className="border-t border-gold/15 bg-wood px-6 py-12 text-center">
         <p className="font-display text-lg tracking-[0.12em] text-foreground">Rainha da Costela</p>
         <p className="mt-2 text-sm text-muted-foreground">{ADDRESS}</p>
         <div className="my-4"><Ornament /></div>
