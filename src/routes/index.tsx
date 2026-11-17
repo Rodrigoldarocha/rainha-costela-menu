@@ -50,7 +50,7 @@ function Item({ item }: { item: MenuItem }) {
 }
 
 function Index() {
-  const [active, setActive] = useState(menu[0].id);
+  const [active, setActive] = useState("pratos");
   const navRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
