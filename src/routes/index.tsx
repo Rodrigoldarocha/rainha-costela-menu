@@ -1,6 +1,6 @@
 import { createFileRoute, useRouter, type ErrorComponentProps } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState, useDeferredValue, memo } from "react";
-import logo from "@/assets/rainha-logo.png.asset.json";
+import logo from "@/assets/emblema-coroa-rc.png.asset.json";
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { menuQuery, type MenuItem } from "@/data/menu";
@@ -192,20 +192,15 @@ function Index() {
         Pular para o cardápio
       </a>
       <header className="brand-stage relative overflow-hidden px-6 pt-12 pb-12 text-center sm:pt-20 sm:pb-16">
-        <div className="relative mx-auto w-fit">
-          <div className="brand-halo" aria-hidden />
-          <div className="brand-frame relative">
-            <img
-              src={logo.url}
-              alt="Logo Rainha da Costela"
-              width={512}
-              height={341}
-              decoding="async"
-              fetchPriority="high"
-              className="block h-32 w-auto object-contain mix-blend-lighten sm:h-40 lg:h-44"
-            />
-          </div>
-        </div>
+        <img
+          src={logo.url}
+          alt="Emblema Rainha da Costela: coroa e monograma RC"
+          width={1254}
+          height={1254}
+          decoding="async"
+          fetchPriority="high"
+          className="mx-auto block h-36 w-auto object-contain drop-shadow-[0_12px_28px_oklch(0_0_0/0.55)] sm:h-44 lg:h-52"
+        />
         <h1 className="mt-8 font-display text-[2.1rem] leading-none font-bold tracking-[0.14em] text-foreground sm:text-6xl">
           Rainha da Costela
         </h1>
