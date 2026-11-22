@@ -30,3 +30,5 @@ use the editor.
 <!-- LOVABLE:END -->
 
 - Menu content lives in the database (categories, products) and is read publicly; the site has no admin UI by design — edits happen in the database and reach the page via live updates.
+
+- Keep menu presentation in the index route and global semantic CSS tokens, leaving data loading and search filtering untouched during visual changes; this protects the live menu behavior.
