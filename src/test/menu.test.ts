@@ -19,6 +19,11 @@ describe("menu sanitization", () => {
   it("slices to max length", () => {
     expect(cleanText("abcdef", 3)).toBe("abc");
   });
+
+  it("normalizes line breaks and strips invisible/bidi characters", () => {
+    expect(cleanText("Feijoada\ncom farofa", 100)).toBe("Feijoada com farofa");
+    expect(cleanText("a\u202Eb\u200Bc", 100)).toBe("abc");
+  });
 });
 
 describe("price formatting", () => {
@@ -29,5 +34,11 @@ describe("price formatting", () => {
   it("returns dash for invalid or negative values", () => {
     expect(brl(-1)).toBe("—");
     expect(brl(NaN)).toBe("—");
+    expect(brl("<script>")).toBe("—");
+    expect(brl(null)).toBe("—");
+  });
+
+  it("accepts numeric strings from the database", () => {
+    expect(brl("38.5")).toBe("38,50");
   });
 });

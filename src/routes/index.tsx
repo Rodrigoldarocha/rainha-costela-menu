@@ -144,6 +144,21 @@ function Index() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  const scrollToSection = (id: string) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    el.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
+    if (id === "main-content") {
+      el.focus({ preventScroll: true });
+    } else {
+      setActive(id);
+      if (window.location.hash !== `#${id}`) {
+        window.history.replaceState(null, "", `#${id}`);
+      }
+    }
+  };
+
   const normalizedSearch = deferredSearch.trim().toLowerCase();
   const filteredMenu = useMemo(() => (normalizedSearch
     ? menu
@@ -185,12 +200,13 @@ function Index() {
           }),
         }}
       />
-      <a
-        href="#main-content"
+      <button
+        type="button"
+        onClick={() => scrollToSection("main-content")}
         className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-sm focus:bg-background focus:px-3 focus:py-2 focus:text-sm focus:text-foreground focus:ring-2 focus:ring-gold"
       >
         Pular para o cardápio
-      </a>
+      </button>
       <header className="brand-stage relative overflow-hidden px-6 pt-12 pb-12 text-center sm:pt-20 sm:pb-16">
         <div className="relative mx-auto w-fit">
           <div className="brand-halo" aria-hidden />
@@ -234,17 +250,18 @@ function Index() {
       <nav aria-label="Categorias" className="sticky top-0 z-20 border-y border-border bg-background/90 backdrop-blur-md">
         <div ref={navRef} className="no-scrollbar mx-auto flex max-w-3xl gap-2 overflow-x-auto px-4 py-4">
           {filteredMenu.map((c) => (
-            <a
+            <button
               key={c.id}
+              type="button"
               data-id={c.id}
-              href={`#${c.id}`}
+              onClick={() => scrollToSection(c.id)}
               aria-current={active === c.id ? "true" : undefined}
               className={`shrink-0 rounded-full px-4 py-2.5 font-display text-[11px] tracking-[0.15em] uppercase transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold ${
                 active === c.id ? "bg-gold text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-gold-soft"
               }`}
             >
               {c.label}
-            </a>
+            </button>
           ))}
         </div>
       </nav>
