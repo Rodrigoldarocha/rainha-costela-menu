@@ -1,9 +1,11 @@
 import { createFileRoute, useRouter, type ErrorComponentProps } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState, useDeferredValue, memo } from "react";
-import logo from "@/assets/rainha-logo.png.asset.json";
+import logo from "@/assets/emblema-coroa-rc.png.asset.json";
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { menuQuery, type MenuItem } from "@/data/menu";
+import { Button } from "@/components/ui/button";
+import { ArrowDown, ArrowUp, MapPin, Search } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -51,25 +53,24 @@ function Ornament() {
 
 const Item = memo(function Item({ item }: { item: MenuItem }) {
   const nameMatch = item.name.match(/^(.*?)(\s*\([^)]*\))\s*$/);
-  const primaryName = nameMatch ? nameMatch[1]!.trim() : item.name;
-  const nameDetail = nameMatch ? nameMatch[2]!.trim() : null;
+  const primaryName = nameMatch?.[1]?.trim() ?? item.name;
+  const nameDetail = nameMatch?.[2]?.trim() ?? null;
   const isSignature = item.tag === "Especial" || /costela no bafo/i.test(item.name) || /combo petisco da rainha/i.test(item.name);
   return (
-    <li className={`py-6 first:pt-0 last:pb-0 ${isSignature ? "rounded-sm border border-gold/25 bg-gold/5 p-4 -mx-2" : ""}`}>
+    <li className={`menu-item ${isSignature ? "menu-item-signature" : ""}`}>
       {isSignature && (
-        <span className="mb-2 inline-block font-display text-[10px] tracking-[0.25em] uppercase text-gold">Especialidade da Rainha</span>
+        <span className="mb-2 inline-block text-xs font-medium uppercase text-gold">Especialidade da Rainha</span>
       )}
       {item.tag && (
-        <span className="mb-1.5 inline-block font-display text-[10px] tracking-[0.25em] uppercase text-gold">{item.tag}</span>
+        <span className="mb-1.5 inline-block text-xs font-medium uppercase text-gold">{item.tag}</span>
       )}
-      <div className="flex items-baseline gap-3">
-        <h4 className="min-w-0 font-serif text-[1.35rem] leading-tight font-semibold text-foreground text-pretty break-words">{primaryName}</h4>
-        <span className="leader" aria-hidden />
-        <p className="shrink-0 font-display text-base font-semibold text-gold-soft whitespace-nowrap tabular-nums">
+      <div className="grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-x-3 gap-y-1">
+        <h4 className="min-w-0 font-serif text-xl leading-snug font-semibold text-foreground text-pretty break-words">{primaryName}</h4>
+        <p className="shrink-0 text-base font-semibold text-gold-soft whitespace-nowrap tabular-nums">
           <span className="mr-0.5 text-xs text-gold">R$</span>{item.price}
         </p>
       </div>
-      {nameDetail && <p className="mt-0.5 text-xs text-muted-foreground">{nameDetail}</p>}
+      {nameDetail && <p className="mt-0.5 text-sm leading-relaxed text-muted-foreground">{nameDetail}</p>}
       {item.description && (
         <p className="mt-1.5 max-w-[34rem] text-sm leading-relaxed text-muted-foreground">{item.description}</p>
       )}
@@ -85,7 +86,7 @@ function RouteErrorComponent({ reset }: ErrorComponentProps) {
         <h1 className="text-xl font-semibold tracking-tight text-foreground">Não foi possível carregar o cardápio</h1>
         <p className="mt-2 text-sm text-muted-foreground">Tente novamente ou volte ao início.</p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
-          <button
+          <Button
             onClick={() => {
               router.invalidate();
               reset();
@@ -93,7 +94,7 @@ function RouteErrorComponent({ reset }: ErrorComponentProps) {
             className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold"
           >
             Tentar novamente
-          </button>
+          </Button>
           <a
             href="/"
             className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold"
@@ -127,7 +128,7 @@ function Index() {
   useEffect(() => {
     const obs = new IntersectionObserver(
       (entries) => entries.forEach((e) => e.isIntersecting && setActive(e.target.id)),
-      { rootMargin: "-35% 0px -60% 0px" },
+      { rootMargin: `-96px 0px -${Math.max(0, window.innerHeight - 220)}px 0px` },
     );
     menu.forEach((c) => { const el = document.getElementById(c.id); if (el) obs.observe(el); });
     return () => obs.disconnect();
@@ -200,55 +201,58 @@ function Index() {
           }),
         }}
       />
-      <button
-        type="button"
-        onClick={() => scrollToSection("main-content")}
+      <a
+        href="#main-content"
         className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-sm focus:bg-background focus:px-3 focus:py-2 focus:text-sm focus:text-foreground focus:ring-2 focus:ring-gold"
       >
         Pular para o cardápio
-      </button>
-      <header className="brand-stage relative overflow-hidden px-6 pt-12 pb-12 text-center sm:pt-20 sm:pb-16">
-        <div className="relative mx-auto w-fit">
-          <div className="brand-halo" aria-hidden />
-          <div className="brand-frame relative">
-            <img
-              src={logo.url}
-              alt="Logo Rainha da Costela"
-              width={512}
-              height={341}
-              decoding="async"
-              fetchPriority="high"
-              className="block h-32 w-auto object-contain mix-blend-lighten sm:h-40 lg:h-44"
-            />
-          </div>
-        </div>
-        <h1 className="mt-8 font-display text-[2.1rem] leading-none font-bold tracking-[0.14em] text-foreground sm:text-6xl">
+      </a>
+      <header className="brand-stage px-5 py-5 text-center sm:px-8 sm:py-12">
+        <img
+          src={logo.url}
+          alt="Emblema Rainha da Costela: coroa e monograma RC"
+          width={1254}
+          height={1254}
+          decoding="async"
+          fetchPriority="high"
+          className="mx-auto block size-20 object-contain sm:size-36"
+        />
+        <h1 className="mt-3 font-display text-[2rem] font-semibold leading-tight text-foreground sm:mt-4 sm:text-5xl">
           Rainha da Costela
         </h1>
-        <div className="mx-auto mt-4 flex max-w-xs items-center justify-center gap-3" aria-hidden>
-          <span className="ornament-line flex-1" />
-          <span className="size-1.5 rotate-45 bg-gold" />
-          <span className="ornament-line flex-1" />
-        </div>
-        <p className="mt-4 font-serif text-xl italic text-gold-soft sm:text-3xl">O simples que encanta</p>
-        <p className="mt-6 text-[11px] tracking-[0.25em] uppercase text-muted-foreground">{ADDRESS}</p>
-        <p className="mx-auto mt-4 max-w-md font-serif text-sm italic leading-relaxed text-muted-foreground">
+        <p className="mt-2 font-serif text-lg italic text-gold-soft sm:text-2xl">O simples que encanta</p>
+        <p className="mx-auto mt-3 flex max-w-md items-start justify-center gap-2 text-sm leading-relaxed text-muted-foreground">
+          <MapPin className="mt-0.5 size-4 shrink-0 text-gold" aria-hidden="true" />
+          <span className="min-w-0">{ADDRESS}</span>
+        </p>
+        <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-muted-foreground">
           Preparo artesanal e fogo lento. Aprecie sem pressa.
         </p>
-        <div className="mx-auto mt-6 max-w-md px-4">
+        <Button asChild variant="link" className="mt-1 min-h-11 text-gold-soft sm:mt-3">
+          <a href="#main-content" onClick={(e) => { e.preventDefault(); scrollToSection("main-content"); }}>Cardápio <ArrowDown aria-hidden="true" /></a>
+        </Button>
+      </header>
+
+      <div className="menu-intro mx-auto grid max-w-6xl gap-4 px-5 py-5 sm:grid-cols-[minmax(0,1fr)_minmax(280px,420px)] sm:items-center sm:px-8 sm:py-9">
+        <div className="min-w-0">
+          <h2 className="font-display text-3xl font-semibold text-foreground sm:text-4xl">Cardápio</h2>
+          <div className="mt-3 h-px w-12 bg-gold" aria-hidden="true" />
+        </div>
+        <div className="relative min-w-0">
+          <Search className="pointer-events-none absolute left-4 top-1/2 size-5 -translate-y-1/2 text-gold" aria-hidden="true" />
           <input
             type="search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Buscar prato, caldinho ou bebida..."
-            className="w-full rounded-full border border-gold/20 bg-card/60 px-4 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/40"
+            className="min-h-12 w-full rounded-md border border-input bg-card py-3 pl-12 pr-4 text-base text-foreground placeholder:text-muted-foreground focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/40"
             aria-label="Buscar no cardápio"
           />
         </div>
-      </header>
+      </div>
 
-      <nav aria-label="Categorias" className="sticky top-0 z-20 border-y border-border bg-background/90 backdrop-blur-md">
-        <div ref={navRef} className="no-scrollbar mx-auto flex max-w-3xl gap-2 overflow-x-auto px-4 py-4">
+      <nav aria-label="Categorias" className="category-bar sticky top-0 z-20 border-y border-border bg-background/95 backdrop-blur-md">
+        <div ref={navRef} className="no-scrollbar mx-auto flex max-w-6xl gap-2 overflow-x-auto px-5 py-3 sm:px-8">
           {filteredMenu.map((c) => (
             <button
               key={c.id}
@@ -256,8 +260,8 @@ function Index() {
               data-id={c.id}
               onClick={() => scrollToSection(c.id)}
               aria-current={active === c.id ? "true" : undefined}
-              className={`shrink-0 rounded-full px-4 py-2.5 font-display text-[11px] tracking-[0.15em] uppercase transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold ${
-                active === c.id ? "bg-gold text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-gold-soft"
+              className={`shrink-0 min-h-11 rounded-md border border-transparent px-4 py-3 text-sm font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold ${
+                active === c.id ? "border-gold/35 bg-gold/10 text-gold-soft" : "text-muted-foreground hover:bg-card hover:text-foreground"
               }`}
             >
               {c.label}
@@ -266,23 +270,22 @@ function Index() {
         </div>
       </nav>
 
-      <main id="main-content" className="mx-auto max-w-3xl px-5 pb-20 sm:px-8">
+      <main id="main-content" className="mx-auto max-w-6xl px-5 pb-16 sm:px-8 sm:pb-20">
         {filteredMenu.length === 0 ? (
           <p className="py-16 text-center text-muted-foreground">Cardápio indisponível no momento.</p>
         ) : filteredMenu.map((c) => (
-          <section key={c.id} id={c.id} className="scroll-mt-24 pt-16 motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-2 motion-safe:duration-500">
-            <div className="mb-7 text-center">
-              <h2 className="font-display text-2xl font-semibold tracking-[0.24em] uppercase text-gold">{c.title}</h2>
-              <div className="mt-4"><Ornament /></div>
+          <section key={c.id} id={c.id} className="menu-section scroll-mt-24 pt-9 sm:pt-12">
+            <div className="mb-5 border-b border-border pb-5 sm:mb-6">
+              <h2 className="font-display text-2xl font-semibold leading-snug text-gold-soft sm:text-3xl">{c.title}</h2>
               {c.note && <p className="mt-4 font-serif text-base italic text-muted-foreground">* {c.note}</p>}
             </div>
             <div className="space-y-8">
               {c.groups.map((g, i) => (
-                <div key={i} className="corner-ornament rounded-sm border border-gold/15 bg-card/70 p-6 shadow-[0_18px_50px_-24px_oklch(0_0_0/0.7)] sm:p-8">
+                <div key={i} className="min-w-0">
                   {g.title && (
-                    <h3 className="mb-6 border-b border-gold/15 pb-3 font-display text-[11px] tracking-[0.3em] uppercase text-gold-soft">{g.title}</h3>
+                    <h3 className="mb-4 text-sm font-semibold text-muted-foreground">{g.title}</h3>
                   )}
-                  <ul className="divide-y divide-border">
+                  <ul className="grid auto-rows-fr grid-cols-1 gap-3 md:grid-cols-2 md:gap-4">
                     {g.items.map((it) => <Item key={it.id} item={it} />)}
                   </ul>
                 </div>
@@ -293,18 +296,21 @@ function Index() {
       </main>
 
       {showTop && (
-        <button
+        <Button
+          variant="outline"
+          size="icon"
           type="button"
           onClick={() => window.scrollTo({ top: 0, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" })}
-          className="fixed bottom-5 right-5 z-30 flex size-11 items-center justify-center rounded-full border border-gold/40 bg-background/80 text-gold backdrop-blur-md transition hover:bg-gold/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+          className="back-to-top fixed z-30 size-12 rounded-md border-gold/40 bg-background text-gold-soft"
           aria-label="Voltar ao topo"
         >
-          ↑
-        </button>
+          <ArrowUp aria-hidden="true" />
+        </Button>
       )}
 
-      <footer className="border-t border-gold/15 bg-wood px-6 py-12 text-center">
-        <p className="font-display text-lg tracking-[0.12em] text-foreground">Rainha da Costela</p>
+      <footer className="brand-footer border-t border-border bg-card px-5 py-9 text-center sm:py-12">
+        <img src={logo.url} alt="" width={1254} height={1254} loading="lazy" className="mx-auto mb-3 size-16 object-contain" />
+        <p className="font-display text-2xl text-foreground">Rainha da Costela</p>
         <p className="mt-2 text-sm text-muted-foreground">{ADDRESS}</p>
         <div className="my-4"><Ornament /></div>
         <p className="font-serif text-base italic text-gold-soft">O simples que encanta</p>
